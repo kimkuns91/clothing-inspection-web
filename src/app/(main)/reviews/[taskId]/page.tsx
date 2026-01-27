@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -236,6 +236,7 @@ export default function ReviewDetailPage() {
                           ? 'back'
                           : 'side'
                       }
+                      imageUrl={getImageUrl(data.inspection_image_keys[selectedInspectionImage])}
                     />
                   )}
                 </>
@@ -488,15 +489,27 @@ export default function ReviewDetailPage() {
 function BboxOverlay({
   detections,
   currentImage,
+  imageUrl,
 }: {
   detections: { class_name: string; confidence: number; bbox: number[]; source_image: string | null }[];
   currentImage: string;
+  imageUrl: string;
 }) {
+  const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null);
+
+  useEffect(() => {
+    const img = new window.Image();
+    img.onload = () => {
+      setImageSize({ width: img.naturalWidth, height: img.naturalHeight });
+    };
+    img.src = imageUrl;
+  }, [imageUrl]);
+
   const filtered = detections.filter(
     (d) => d.source_image === currentImage || d.source_image === null
   );
 
-  if (filtered.length === 0) return null;
+  if (filtered.length === 0 || !imageSize) return null;
 
   const colors: Record<string, string> = {
     damage: 'border-rose-500 bg-rose-500/20',
@@ -508,11 +521,11 @@ function BboxOverlay({
     <div className="absolute inset-0 pointer-events-none">
       {filtered.map((d, idx) => {
         const [x1, y1, x2, y2] = d.bbox;
-        const imgSize = 1000;
-        const left = (x1 / imgSize) * 100;
-        const top = (y1 / imgSize) * 100;
-        const width = ((x2 - x1) / imgSize) * 100;
-        const height = ((y2 - y1) / imgSize) * 100;
+        // 원본 이미지의 실제 해상도 기준으로 백분율 계산
+        const left = (x1 / imageSize.width) * 100;
+        const top = (y1 / imageSize.height) * 100;
+        const width = ((x2 - x1) / imageSize.width) * 100;
+        const height = ((y2 - y1) / imageSize.height) * 100;
 
         return (
           <div
