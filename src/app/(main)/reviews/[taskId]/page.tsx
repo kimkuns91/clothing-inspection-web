@@ -266,6 +266,46 @@ export default function ReviewDetailPage() {
           </div>
         </div>
 
+        {/* RT-DETR Raw Detections */}
+        {data.raw_detections && data.raw_detections.length > 0 && (
+          <div className="bg-white p-6 rounded-[24px] border border-amber-200 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+                  <Eye className="w-5 h-5 text-amber-600" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-zinc-900">RT-DETR 원본 탐지</h3>
+                  <p className="text-xs text-zinc-400">Qwen 검증 전 탐지 결과</p>
+                </div>
+              </div>
+              <span className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-bold">
+                {data.raw_detections.length}건 탐지
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {data.raw_detections.map((d, idx) => (
+                <div
+                  key={idx}
+                  className="px-3 py-2 bg-amber-50 rounded-xl border border-amber-200"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-amber-800">
+                      {d.class_name}
+                    </span>
+                    <span className="text-xs text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">
+                      {(d.confidence * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-amber-600 mt-1">
+                    {d.source_image || 'unknown'} | bbox: [{d.bbox.join(', ')}]
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Model Results Comparison */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Gemini Result */}

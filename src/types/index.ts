@@ -88,6 +88,7 @@ export interface ReviewDetail {
   original_image_keys: string[];
   gemini: GeminiResult;
   custom: CustomResult;
+  raw_detections: DetectionItem[] | null;  // RT-DETR 원본 탐지 결과 (Qwen 검증 전)
   grade_match: boolean | null;
   price_diff: number | null;
   reviewed: boolean;
