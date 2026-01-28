@@ -176,41 +176,41 @@ export default function ReviewsPage() {
                         <Link href={`/reviews/${item.task_id}`} className="block">
                           <div className="flex justify-center">
                             {item.grade_match === null ? (
-                              <span className="px-3 py-1 bg-zinc-100 text-zinc-400 rounded-full text-[10px] font-bold">
+                              <span className="inline-block whitespace-nowrap px-3 py-1 bg-zinc-100 text-zinc-400 rounded-full text-[10px] font-bold">
                                 대기
                               </span>
                             ) : item.grade_match ? (
-                              <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-bold border border-emerald-100">
+                              <span className="inline-flex items-center gap-1.5 whitespace-nowrap px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-bold border border-emerald-100">
                                 <CheckCircle size={12} /> 일치
-                              </div>
+                              </span>
                             ) : (
-                              <div className="flex items-center gap-1.5 px-3 py-1 bg-rose-50 text-rose-600 rounded-full text-[10px] font-bold border border-rose-100">
+                              <span className="inline-flex items-center gap-1.5 whitespace-nowrap px-3 py-1 bg-rose-50 text-rose-600 rounded-full text-[10px] font-bold border border-rose-100">
                                 <XCircle size={12} /> 불일치
-                              </div>
+                              </span>
                             )}
                           </div>
                         </Link>
                       </td>
-                      <td className="px-8 py-4 text-center">
+                      <td className="px-8 py-4 text-center whitespace-nowrap">
                         <Link href={`/reviews/${item.task_id}`} className="block">
                           {item.reviewed ? (
-                            <span className="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-bold border border-emerald-100">
+                            <span className="inline-block whitespace-nowrap px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-bold border border-emerald-100">
                               완료
                             </span>
                           ) : (
-                            <span className="px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[10px] font-bold border border-amber-100">
+                            <span className="inline-block whitespace-nowrap px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[10px] font-bold border border-amber-100">
                               대기
                             </span>
                           )}
                         </Link>
                       </td>
-                      <td className="px-8 py-4 text-right">
+                      <td className="px-8 py-4 text-right whitespace-nowrap">
                         <Link href={`/reviews/${item.task_id}`} className="block">
                           <div className="flex flex-col items-end">
-                            <span className="text-xs font-semibold text-zinc-700">
+                            <span className="text-xs font-semibold text-zinc-700 whitespace-nowrap">
                               {formatDate(item.created_at)}
                             </span>
-                            <span className="text-[10px] text-zinc-400 uppercase font-medium">
+                            <span className="text-[10px] text-zinc-400 uppercase font-medium whitespace-nowrap">
                               {formatTime(item.created_at)}
                             </span>
                           </div>
