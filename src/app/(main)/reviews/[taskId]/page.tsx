@@ -347,16 +347,40 @@ export default function ReviewDetailPage() {
                   </div>
                 </div>
 
+                {/* Grade Reason */}
+                <div>
+                  <p className="text-xs text-zinc-400 mb-2">판정 사유</p>
+                  <p className="text-sm text-zinc-700">{data.custom.grade_reason || '-'}</p>
+                </div>
+
+                {/* Total Score */}
+                {data.custom.total_score !== undefined && data.custom.total_score !== null && (
+                  <div className="p-3 bg-violet-50 rounded-xl">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs font-bold text-violet-700">총점</p>
+                      <p className="text-lg font-bold text-violet-700">{data.custom.total_score}점</p>
+                    </div>
+                    <p className="text-[10px] text-violet-500 mt-1">
+                      S: 0-19 | A: 20-49 | B: 50-99 | F: 100+
+                    </p>
+                  </div>
+                )}
+
                 {/* Detection Results */}
                 {data.custom.detections && data.custom.detections.length > 0 && (
                   <div className="p-4 bg-violet-50 rounded-xl">
                     <p className="text-xs font-bold text-violet-700 mb-2">RT-DETR 탐지결과</p>
                     <div className="flex flex-wrap gap-2">
-                      {data.custom.detections.map((d, idx) => (
-                        <span key={idx} className="px-2 py-1 bg-white rounded-lg text-xs font-medium text-violet-700 border border-violet-200">
-                          {d.class_name} {(d.confidence * 100).toFixed(0)}%
-                        </span>
-                      ))}
+                      {data.custom.detections
+                        .filter((d) => d.class_name !== 'none')
+                        .map((d, idx) => (
+                          <span key={idx} className="px-2 py-1 bg-white rounded-lg text-xs font-medium text-violet-700 border border-violet-200">
+                            {d.class_name} {(d.confidence * 100).toFixed(0)}%
+                          </span>
+                        ))}
+                      {data.custom.detections.filter((d) => d.class_name !== 'none').length === 0 && (
+                        <span className="text-xs text-violet-500">결함 없음</span>
+                      )}
                     </div>
                   </div>
                 )}
@@ -365,17 +389,37 @@ export default function ReviewDetailPage() {
                 {data.custom.origin_comparison && (
                   <div className="p-4 bg-zinc-50 rounded-xl">
                     <p className="text-xs font-bold text-zinc-700 mb-2">원본 비교</p>
-                    <div className="grid grid-cols-3 gap-2 text-xs">
-                      <div className="flex items-center gap-1">
-                        동일상품: {data.custom.origin_comparison.same_product ? <Check size={14} className="text-emerald-500" /> : <X size={14} className="text-rose-500" />}
+                    {'is_valid' in data.custom.origin_comparison ? (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-xs">
+                          <span>결함 유효성:</span>
+                          {(data.custom.origin_comparison as { is_valid: boolean; validation_reason: string | null }).is_valid ? (
+                            <span className="flex items-center gap-1 text-rose-600 font-medium">
+                              <Check size={14} /> 새로운 결함
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1 text-emerald-600 font-medium">
+                              <X size={14} /> 기존 결함/디자인
+                            </span>
+                          )}
+                        </div>
+                        {(data.custom.origin_comparison as { is_valid: boolean; validation_reason: string | null }).validation_reason && (
+                          <p className="text-xs text-zinc-500">{(data.custom.origin_comparison as { is_valid: boolean; validation_reason: string | null }).validation_reason}</p>
+                        )}
                       </div>
-                      <div className="flex items-center gap-1">
-                        기존결함: {data.custom.origin_comparison.defect_in_origin ? <Check size={14} className="text-emerald-500" /> : <X size={14} className="text-rose-500" />}
+                    ) : (
+                      <div className="grid grid-cols-3 gap-2 text-xs">
+                        <div className="flex items-center gap-1">
+                          동일상품: {(data.custom.origin_comparison as { same_product: boolean | null }).same_product ? <Check size={14} className="text-emerald-500" /> : <X size={14} className="text-rose-500" />}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          기존결함: {(data.custom.origin_comparison as { defect_in_origin: boolean | null }).defect_in_origin ? <Check size={14} className="text-emerald-500" /> : <X size={14} className="text-rose-500" />}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          디자인: {(data.custom.origin_comparison as { is_design: boolean | null }).is_design ? <Check size={14} className="text-emerald-500" /> : <X size={14} className="text-rose-500" />}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        디자인: {data.custom.origin_comparison.is_design ? <Check size={14} className="text-emerald-500" /> : <X size={14} className="text-rose-500" />}
-                      </div>
-                    </div>
+                    )}
                   </div>
                 )}
 
@@ -512,6 +556,13 @@ function BboxOverlay({
   if (filtered.length === 0 || !imageSize) return null;
 
   const colors: Record<string, string> = {
+    // 새 형식 (DefectType values)
+    hole: 'border-rose-500 bg-rose-500/20',
+    tear: 'border-red-500 bg-red-500/20',
+    stain: 'border-orange-500 bg-orange-500/20',
+    pilling: 'border-amber-500 bg-amber-500/20',
+    none: 'border-zinc-400 bg-zinc-400/20',
+    // 구 형식 (RT-DETR class names) - 하위 호환
     damage: 'border-rose-500 bg-rose-500/20',
     attach: 'border-amber-500 bg-amber-500/20',
     pollution: 'border-orange-500 bg-orange-500/20',

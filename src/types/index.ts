@@ -21,13 +21,22 @@ export interface DetectionItem {
   source_image: string | null;
 }
 
-// 원본 비교 결과
-export interface OriginComparison {
+// 원본 비교 결과 (구버전)
+export interface OriginComparisonLegacy {
   same_product: boolean | null;
   defect_in_origin: boolean | null;
   is_design: boolean | null;
   reason: string | null;
 }
+
+// 원본 비교 결과 (신버전)
+export interface OriginComparisonNew {
+  is_valid: boolean;
+  validation_reason: string | null;
+}
+
+// 원본 비교 결과 (둘 다 지원)
+export type OriginComparison = OriginComparisonLegacy | OriginComparisonNew;
 
 // Gemini 결과
 export interface GeminiResult {
@@ -50,6 +59,7 @@ export interface CustomResult {
   inference_time_ms: number | null;
   rtdetr_time_ms: number | null;
   qwen_time_ms: number | null;
+  total_score: number | null;
   error: string | null;
 }
 
