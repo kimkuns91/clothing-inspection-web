@@ -44,7 +44,10 @@ export interface GeminiResult {
   grade_reason: string | null;
   result_price: number | null;
   details: InspectionDetails | null;
+  detections: DetectionItem[] | null;
+  total_score: number | null;
   inference_time_ms: number | null;
+  gemini_time_ms: number | null;
   error: string | null;
 }
 

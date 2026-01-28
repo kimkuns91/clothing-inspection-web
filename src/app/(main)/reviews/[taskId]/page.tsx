@@ -303,9 +303,47 @@ export default function ReviewDetailPage() {
                     <p className="text-xl font-bold text-zinc-900">{formatPrice(data.gemini.result_price)}</p>
                   </div>
                 </div>
+
+                {/* Grade Reason */}
                 <div>
                   <p className="text-xs text-zinc-400 mb-2">판정 사유</p>
                   <p className="text-sm text-zinc-700">{data.gemini.grade_reason || '-'}</p>
+                </div>
+
+                {/* Total Score */}
+                {data.gemini.total_score !== undefined && data.gemini.total_score !== null && (
+                  <div className="p-3 bg-blue-50 rounded-xl">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs font-bold text-blue-700">총점</p>
+                      <p className="text-lg font-bold text-blue-700">{data.gemini.total_score}점</p>
+                    </div>
+                    <p className="text-[10px] text-blue-500 mt-1">
+                      S: 0-19 | A: 20-49 | B: 50-99 | F: 100+
+                    </p>
+                  </div>
+                )}
+
+                {/* Detection Results */}
+                {data.gemini.detections && data.gemini.detections.length > 0 && (
+                  <div className="p-4 bg-blue-50 rounded-xl">
+                    <p className="text-xs font-bold text-blue-700 mb-2">검증된 결함</p>
+                    <div className="flex flex-wrap gap-2">
+                      {data.gemini.detections
+                        .filter((d) => d.class_name !== 'none')
+                        .map((d, idx) => (
+                          <span key={idx} className="px-2 py-1 bg-white rounded-lg text-xs font-medium text-blue-700 border border-blue-200">
+                            {d.class_name} {d.source_image ? `@${d.source_image}` : ''}
+                          </span>
+                        ))}
+                      {data.gemini.detections.filter((d) => d.class_name !== 'none').length === 0 && (
+                        <span className="text-xs text-blue-500">결함 없음</span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                <div className="text-[10px] text-zinc-400">
+                  Gemini: {formatTime(data.gemini.gemini_time_ms)}
                 </div>
               </div>
             )}
